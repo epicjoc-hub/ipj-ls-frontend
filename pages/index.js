@@ -3,35 +3,33 @@ import { FaDiscord } from "react-icons/fa";
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-black text-white flex flex-col items-center justify-center gap-10 select-none px-4">
+    <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center select-none">
 
-      {/* TITLU (MĂRIT) */}
-      <h1 className="text-center font-bold text-5xl md:text-7xl tracking-wide leading-tight">
-        INSPECTORATUL DE POLITIE JUDETEAN
+      {/* TITLE */}
+      <h1 className="text-4xl md:text-6xl font-bold text-center uppercase tracking-wide mb-4">
+        Inspectoratul de Politie Judetean
         <br />
-        LOS SANTOS
+        Los Santos
       </h1>
 
-      {/* SUBTITLU (MĂRIT) */}
-      <h2 className="text-center opacity-90 text-xl md:text-3xl tracking-wide">
-        SITE OFICIAL TESTE
+      {/* SUBTITLE */}
+      <h2 className="text-xl md:text-2xl font-semibold text-center mb-8 opacity-90">
+        Site Oficial Teste
       </h2>
 
-      {/* BUTON DISCORD (MĂRIT) */}
+      {/* BUTTON */}
       <Link
-      id="discordButton"
-       href="https://present-alberta-ipjls-757d03fe.koyeb.app/auth/discord"
-       className="w-80 h-36 rounded-md flex flex-col items-center justify-center gap-3 font-bold text-2xl border shadow-md"
+        href="https://present-alberta-ipjls-757d03fe.koyeb.app/auth/discord"
+        className="bg-blue-600 hover:bg-blue-700 px-10 py-4 rounded-md text-xl font-bold flex flex-col items-center justify-center border border-blue-400 transition-all"
       >
-  AUTENTIFICARE PRIN DISCORD
-  <FaDiscord size={42} />
-</Link>
+        Autentificare prin Discord
+        <FaDiscord size={42} className="mt-2" />
+      </Link>
 
-
-      {/* CREDIT */}
-      <p className="text-lg opacity-80 mt-4">
-        CREAT DE VICTOR POPESCU / 6067
+      {/* FOOTER */}
+      <p className="mt-6 text-sm opacity-80">
+        Creat de Victor Popescu / 6067
       </p>
-    </main>
+    </div>
   );
 }
