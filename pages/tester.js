@@ -38,7 +38,7 @@ export default function Tester() {
       </div>
     );
 
-  if (!user.isTester)
+  if (!user.isTester && !user.isEditor)
     return (
       <div className="min-h-screen bg-black text-white flex items-center justify-center">
         Acces restricționat.
