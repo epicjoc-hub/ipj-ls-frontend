@@ -1,4 +1,3 @@
-// pages/instructors.js
 import { useEffect, useRef, useState } from "react";
 import { API_URL, useUser } from "../components/Layout";
 import TerminalText from "../components/TerminalText";
@@ -9,7 +8,6 @@ export default function Instructors() {
   const [pings, setPings] = useState([]);
   const esRef = useRef(null);
 
-  // încărcare duty
   useEffect(() => {
     (async () => {
       const res = await fetch(API_URL + "/duty/list");
@@ -18,33 +16,21 @@ export default function Instructors() {
     })();
   }, []);
 
-  // subscribe la evenimente
   useEffect(() => {
-    // doar user autentificat
     if (!user) return;
-
     const es = new EventSource(API_URL + "/events", { withCredentials: true });
     esRef.current = es;
 
     es.onmessage = (ev) => {
       try {
         const msg = JSON.parse(ev.data);
-        if (msg.type === "duty-update") {
-          setList(Object.values(msg.payload));
-        }
+        if (msg.type === "duty-update") setList(Object.values(msg.payload));
         if (msg.type === "ping") {
-          // filtrează pe rol
           const p = msg.payload;
           if (p.testType === "radio" && !user.canRadio) return;
           if (p.testType === "mdt" && !user.canMDT) return;
+          if (p.testType === "academie" && !(user.isTester || user.isEditor)) return;
           setPings((old) => [p, ...old].slice(0, 50));
-          // beep mic
-          try {
-            const a = new Audio(
-              "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YQgAAAAA"
-            );
-            a.play().catch(() => {});
-          } catch {}
         }
         if (msg.type === "ack") {
           setPings((old) => old.map((x) => (x.id === msg.payload.id ? msg.payload : x)));
@@ -52,13 +38,7 @@ export default function Instructors() {
       } catch {}
     };
 
-    es.onerror = () => {
-      // se va reconecta automat
-    };
-
-    return () => {
-      es.close();
-    };
+    return () => es.close();
   }, [user]);
 
   async function accept(id) {
@@ -74,27 +54,22 @@ export default function Instructors() {
 
   return (
     <div className="space-y-8">
-      <TerminalText
-        text="> CIA TERMINAL • INSTRUCTOR LIVE CONSOLE • MONITORING PINGS"
-        className="text-green-400"
-      />
+      <TerminalText text="> CIA TERMINAL • INSTRUCTOR LIVE CONSOLE • MONITORING PINGS" className="text-green-400" />
 
-      <section>
+      <section className="card-grid p-4 rounded-xl">
         <h2 className="text-xl mb-3 opacity-80">Instructori ON DUTY</h2>
         <div className="grid md:grid-cols-2 gap-3">
           {list.map((u) => (
-            <div key={u.id} className="border border-blue-500 bg-blue-900/30 rounded p-3">
+            <div key={u.id} className="border border-cyan-500 bg-cyan-900/30 rounded p-3">
               <div className="font-bold">{u.tag}</div>
-              <div className="text-sm opacity-75">
-                Roluri: {u.roles.join(", ") || "—"} • Din: {new Date(u.since).toLocaleString()}
-              </div>
+              <div className="text-sm opacity-75">Roluri: {u.roles.join(", ") || "—"} • Din: {new Date(u.since).toLocaleString()}</div>
             </div>
           ))}
           {!list.length && <div className="opacity-70">Nimeni în tură.</div>}
         </div>
       </section>
 
-      <section>
+      <section className="card-grid p-4 rounded-xl">
         <h2 className="text-xl mb-3 opacity-80">Pings Live</h2>
         <div className="grid gap-3">
           {pings.map((p) => (
@@ -103,18 +78,11 @@ export default function Instructors() {
                 <div className="font-bold uppercase">{p.testType} • {p.id}</div>
                 <div className="text-sm opacity-80">De la: {p.requester.tag} • {new Date(p.time).toLocaleString()}</div>
                 {p.note && <div className="text-sm opacity-80">Notă: {p.note}</div>}
-                {p.status === "accepted" && (
-                  <div className="text-sm text-green-400 mt-1">
-                    Acceptat de {p.acceptedBy?.tag}
-                  </div>
-                )}
+                {p.status === "accepted" && <div className="text-sm text-green-400 mt-1">Acceptat de {p.acceptedBy?.tag}</div>}
               </div>
               <div>
                 {p.status === "open" ? (
-                  <button
-                    onClick={() => accept(p.id)}
-                    className="bg-green-600 hover:bg-green-700 border border-green-400 px-4 py-2 rounded font-bold"
-                  >
+                  <button onClick={() => accept(p.id)} className="bg-green-600 hover:bg-green-700 border border-green-400 px-4 py-2 rounded font-bold">
                     Acceptă
                   </button>
                 ) : (

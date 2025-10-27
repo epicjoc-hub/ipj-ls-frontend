@@ -1,6 +1,6 @@
-// pages/tester.js
 import { useEffect, useState } from "react";
 import { API_URL, useUser } from "../components/Layout";
+import TerminalText from "../components/TerminalText";
 
 export default function Tester() {
   const { user } = useUser();
@@ -17,20 +17,13 @@ export default function Tester() {
   }, []);
 
   if (loading) return <div className="min-h-[60vh] flex items-center justify-center">Se încarcă...</div>;
-
-  if (!user?.isTester && !user?.isEditor)
-    return <div className="min-h-[60vh] flex items-center justify-center">Acces restricționat.</div>;
+  if (!user?.isTester && !user?.isEditor) return <div className="min-h-[60vh] flex items-center justify-center">Acces restricționat.</div>;
 
   return (
     <div className="min-h-[60vh] flex flex-col items-center justify-center gap-4">
-      <h1 className="text-3xl font-bold">COD TESTER</h1>
-      <div className="bg-blue-600 px-6 py-4 rounded text-2xl tracking-widest border border-blue-400 select-all">
-        {code}
-      </div>
-      <button
-        onClick={() => navigator.clipboard.writeText(code)}
-        className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-md border border-blue-300"
-      >
+      <TerminalText text="> CIA TERMINAL • TESTER CODE • SECURE" className="text-green-400" />
+      <div className="bg-cyan-600 px-6 py-4 rounded text-2xl tracking-widest border border-cyan-400 select-all">{code}</div>
+      <button onClick={() => navigator.clipboard.writeText(code)} className="bg-cyan-600 hover:bg-cyan-700 px-4 py-2 rounded-md border border-cyan-300">
         COPIAZĂ COD
       </button>
     </div>

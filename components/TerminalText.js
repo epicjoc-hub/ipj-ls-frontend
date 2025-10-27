@@ -18,7 +18,7 @@ export default function TerminalText({ text = "", speed = 18, className = "" }) 
   return (
     <div className={`font-mono tracking-wide ${className}`}>
       <span>{out}</span>
-      <span className="inline-block w-3 h-5 bg-blue-400 ml-1 align-middle animate-pulse" />
+      <span className="inline-block w-3 h-5 bg-cyan-400 ml-1 align-middle animate-pulse" />
     </div>
   );
 }

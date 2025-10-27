@@ -3,7 +3,7 @@ import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/router";
 import Sidebar from "./Sidebar";
 
-export const API_URL = "https://present-alberta-ipjls-757d03fe.koyeb.app";
+export const API_URL = "https://<koyeb-app>.koyeb.app"; // ← pune domeniul Koyeb aici
 
 const UserCtx = createContext({ user: null, loading: true });
 export const useUser = () => useContext(UserCtx);
@@ -11,49 +11,51 @@ export const useUser = () => useContext(UserCtx);
 export default function Layout({ children, protectedRoute = false }) {
   const router = useRouter();
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(protectedRoute); // doar rutele protejate așteaptă
+  const [loading, setLoading] = useState(protectedRoute);
   const [collapsed, setCollapsed] = useState(false);
 
   useEffect(() => {
     let ignore = false;
-
-    async function fetchUser() {
-      if (!protectedRoute) return; // nu verificăm pe homepage/finish
+    async function run() {
+      if (!protectedRoute) return;
       try {
-        const res = await fetch(`${API_URL}/check-tester`, { credentials: "include" });
-        const data = await res.json();
-        if (ignore) return;
-
-        if (!data.authenticated) {
-          router.replace("/");
-          return;
+        const r = await fetch(`${API_URL}/check-tester`, { credentials: "include" });
+        const data = await r.json();
+        if (!ignore) {
+          if (!data.authenticated) {
+            router.replace("/");
+            return;
+          }
+          setUser(data);
         }
-        setUser(data);
-      } catch (e) {
-        // fallback în caz de eroare
+      } catch (_) {
         router.replace("/");
       } finally {
         if (!ignore) setLoading(false);
       }
     }
-
-    fetchUser();
+    run();
     return () => (ignore = true);
   }, [protectedRoute, router]);
 
-  const logout = () => {
-    window.location.href = `${API_URL}/logout`;
-  };
+  // restore sidebar pref
+  useEffect(() => {
+    const saved = localStorage.getItem("ipjls.sidebar");
+    if (saved !== null) setCollapsed(saved === "1");
+  }, []);
+  useEffect(() => {
+    localStorage.setItem("ipjls.sidebar", collapsed ? "1" : "0");
+  }, [collapsed]);
 
+  const logout = () => (window.location.href = `${API_URL}/logout`);
   const value = useMemo(() => ({ user, loading }), [user, loading]);
 
-  // Layout pentru homepage sau pentru pagina fără sidebar
   const noSidebarRoutes = ["/", "/finish"];
   const showSidebar = !noSidebarRoutes.includes(router.pathname);
 
   return (
     <UserCtx.Provider value={value}>
-      <div className="min-h-screen bg-[rgb(4,7,15)] text-white">
+      <div className="scanline min-h-screen">
         {showSidebar && (
           <Sidebar
             user={user}
@@ -63,31 +65,12 @@ export default function Layout({ children, protectedRoute = false }) {
             pathname={router.pathname}
           />
         )}
-
-        {/* CONȚINUT */}
         <div className={`${showSidebar ? (collapsed ? "pl-[70px]" : "pl-72") : ""}`}>
-          {/* topbar/breadcrumb */}
-          {showSidebar && (
-            <header className="sticky top-0 z-30 bg-black/50 backdrop-blur border-b border-blue-900/40 px-4 py-3 flex items-center justify-between">
-              <div className="text-sm opacity-70">
-                {router.pathname === "/dashboard" ? "Acasă" : "Acasă / "}{router.pathname.replace("/", "") || "—"}
-              </div>
-              {user && (
-                <div className="text-sm opacity-80">
-                  {user.discord_tag}
-                  {user.isTester && " • Tester"}
-                  {user.isEditor && " • Editor"}
-                </div>
-              )}
-            </header>
-          )}
-
-          {/* skeleton loading pentru rute protejate */}
           {protectedRoute && loading ? (
             <div className="min-h-[70vh] flex items-center justify-center">
               <div className="animate-pulse text-center">
-                <div className="h-6 w-48 bg-blue-600/30 rounded mb-4" />
-                <div className="h-24 w-80 bg-blue-600/20 rounded" />
+                <div className="h-6 w-48 bg-cyan-500/20 rounded mb-4" />
+                <div className="h-24 w-80 bg-cyan-500/10 rounded" />
               </div>
             </div>
           ) : (
