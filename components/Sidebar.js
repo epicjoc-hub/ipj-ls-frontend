@@ -88,6 +88,8 @@ export default function Sidebar({ user, onLogout, collapsed, setCollapsed, pathn
 
       {/* Nav */}
       <nav className="px-2 py-3 flex flex-col gap-1">
+        <NAV_LINK href="/call" icon={FaHeadset} label="Call Instructor" active={pathname === "/call"} />
+<NAV_LINK href="/instructors" icon={FaIdCard} label="Instructori (Live)" active={pathname === "/instructors"} />
         <NAV_LINK href="/dashboard" icon={FaTachometerAlt} label="Dashboard" active={pathname === "/dashboard"} />
 
         {/* Grup Teste */}
