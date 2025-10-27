@@ -19,7 +19,8 @@ export default function Home() {
 
       {/* BUTTON */}
       <Link
-        href="https://present-alberta-ipjls-757d03fe.koyeb.app/auth/discord"
+        href="https://present-alberta-ipjls-757d03fe.koyeb.app/auth/discord/callback
+"
         className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 px-10 py-4 rounded-lg text-2xl font-bold flex flex-col items-center justify-center border border-blue-300 shadow-xl transition-all hover:scale-105"
       >
         Autentificare prin Discord
